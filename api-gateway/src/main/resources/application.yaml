@@ -1,0 +1,26 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true   # auto routes via Eureka
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/users/**
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/orders/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
