@@ -1,97 +1,135 @@
 🚀 Spring Boot Microservices Architecture
 
-This repository demonstrates a real-world Microservices architecture built using Spring Boot and Spring Cloud.
-The project focuses on service decomposition, independent databases, service discovery, inter-service communication, and scalable architecture following industry best practices.
 
-This project is designed as a learning + portfolio project, evolving step by step from core microservices concepts to production-ready patterns.
+
+
+
+
+
+
+
+
+This repository demonstrates a real-world microservices architecture built using Spring Boot and Spring Cloud.
+
+The project is designed as a learning-driven portfolio project, evolving step by step from core microservices concepts to production-ready architectural patterns used in real backend systems.
 
 🧠 Architecture Overview
 
-The system follows a microservices-based architecture where each service:
+The system follows an API Gateway–based microservices architecture, where each service is independent, loosely coupled, and scalable.
 
-Is an independent Spring Boot application
+Core Principles
 
-Owns its own database
+Independent Spring Boot applications
 
-Communicates with other services using REST
+Database per service
 
-Registers itself with a Service Discovery Server
+REST-based inter-service communication
 
-Current and planned architecture:
+Centralized entry point using API Gateway
 
-                +-------------------+
-                |   Eureka Server   |
-                | (Service Registry)|
-                +---------+---------+
-                          |
-        -------------------------------------------
-        |                                         |
-+-------------------+                 +-------------------+
-|   User Service    |                 |  Order Service   |
-|  (MySQL DB)       | <---- REST ---- |  (MySQL DB)      |
-+-------------------+                 +-------------------+
+Service discovery using Eureka
 
-        (Next Phase)
-                |
-        +-------------------+
-        |   API Gateway     |
-        |  (Single Entry)   |
-        +-------------------+
+Independent deployment and scalability
+
+High-Level Flow
+               +-------------------+
+               |   Eureka Server   |
+               | (Service Registry)|
+               +---------+---------+
+                         |
+        ---------------------------------------------
+        |                                           |
++-------------------+                   +-------------------+
+|   User Service    |                   |  Order Service   |
+|   (MySQL DB)      |                   |  (MySQL DB)      |
++-------------------+                   +-------------------+
+        ↑                                           ↑
+        |                                           |
+        +------------- API Gateway -----------------+
+                      (Single Entry Point)
 
 🧩 Services in This Repository
 spring-boot-microservices
- ├── eureka-server        # Service Discovery
- ├── user-service         # User Management Microservice
- ├── order-service        # Order Management Microservice
- ├── api-gateway          # API Gateway (upcoming)
- └── README.md
+├── eureka-server     # Service Discovery Server
+├── api-gateway       # API Gateway (Single Entry Point)
+├── user-service      # User Management Microservice
+├── order-service     # Order Management Microservice
+└── README.md
 
-📦 Services Description
 🔹 Eureka Server
+Responsibilities
 
-Acts as Service Discovery Server
+Acts as a Service Discovery Server
 
-All microservices register themselves here
+All microservices register themselves dynamically
 
 Eliminates hardcoded service URLs
 
-Port: 8761
+Port
+8761
 
-🔹 User Service
+Dashboard
+http://localhost:8761
 
-Manages user data
-
-Exposes REST APIs for user operations
-
-Owns its own MySQL database (user_db)
-
-Registered with Eureka
-
-Port: 8081
-
-🔹 Order Service
-
-Manages order data
-
-Communicates with User Service to validate users
-
-Owns its own MySQL database (order_db)
-
-Registered with Eureka
-
-Port: 8082
-
-🔹 API Gateway (Upcoming)
+🔹 API Gateway
+Responsibilities
 
 Single entry point for all external requests
 
-Routes requests to appropriate microservices
+Routes requests to microservices using service names
 
-Will handle authentication, authorization, and filtering
+Integrates with Eureka for dynamic routing
+
+Handles cross-cutting concerns centrally
+
+Features Implemented
+
+Path-based routing
+
+Load-balanced routing via Eureka
+
+Centralized request logging
+
+Gateway filters
+
+Example Routes
+/api/users/**   → user-service
+/api/orders/**  → order-service
+
+Port
+8080
+
+🔹 User Service
+Responsibilities
+
+Manages user data and operations
+
+Exposes REST APIs for user management
+
+Owns its own database (user_db)
+
+Registers with Eureka
+
+Port
+8081
+
+🔹 Order Service
+Responsibilities
+
+Manages order data and operations
+
+Communicates with User Service to validate users
+
+Owns its own database (order_db)
+
+Registers with Eureka
+
+Port
+8082
 
 🛠 Tech Stack
 
-Java
+Java 17
 
 Spring Boot
 
@@ -99,15 +137,13 @@ Spring Data JPA
 
 Spring Cloud Netflix Eureka
 
-Spring Cloud Gateway (upcoming)
+Spring Cloud Gateway
 
 MySQL
 
-REST APIs
-
 Maven
 
-Docker (upcoming)
+Docker (planned)
 
 🎯 Key Microservices Concepts Implemented
 
@@ -115,15 +151,23 @@ Monolith vs Microservices design
 
 Database per service
 
-Service-to-service communication
-
 Service discovery using Eureka
+
+API Gateway pattern
+
+REST-based inter-service communication
+
+Client-to-service decoupling
 
 Independent deployment of services
 
 Loose coupling and high cohesion
 
 Stateless REST APIs
+
+Global exception handling
+
+Structured logging (SLF4J)
 
 ▶️ How to Run the Project (Local)
 1️⃣ Start MySQL
@@ -134,33 +178,44 @@ Ensure MySQL is running on port 3306.
 cd eureka-server
 mvn spring-boot:run
 
+3️⃣ Start API Gateway
+cd api-gateway
+mvn spring-boot:run
 
-Access dashboard:
-👉 http://localhost:8761
-
-3️⃣ Start User Service
+4️⃣ Start User Service
 cd user-service
 mvn spring-boot:run
 
-4️⃣ Start Order Service
+5️⃣ Start Order Service
 cd order-service
 mvn spring-boot:run
 
 🧪 Sample API Flow
+POST /api/users    → API Gateway → User Service
+POST /api/orders   → API Gateway → Order Service
 
-Create a User → POST /users
+Flow Explanation
 
-Create an Order → POST /orders
+Client sends request to API Gateway
 
-Order Service validates User via User Service
+Gateway resolves service via Eureka
 
-Data stored in respective databases
+Request is routed to target microservice
 
-🔮 Upcoming Enhancements
+Services communicate internally if required
 
-API Gateway using Spring Cloud Gateway
+Data is stored in respective databases
 
-JWT-based authentication & authorization
+✔ Clients never access microservices directly
+✔ Internal service URLs are hidden
+
+🔮 Planned Enhancements
+
+JWT-based authentication & authorization at API Gateway
+
+Role-based access control
+
+Rate limiting & throttling
 
 Centralized configuration using Config Server
 
@@ -181,8 +236,15 @@ Backend Developer | Java | Spring Boot | Microservices
 
 This project is built to:
 
-Understand microservices deeply, not just theory
+Gain deep, practical understanding of microservices architecture
 
-Follow industry-standard architecture
+Implement real-world backend design patterns
 
-Serve as a portfolio project for backend roles
+Demonstrate production-style Spring Boot microservices
+
+Serve as a strong portfolio project for backend and Java developer roles
+
+✅ Final Notes
+
+This repository evolves continuously as new microservices patterns are implemented.
+Each enhancement reflects real-world backend engineering practices, not just theory.
