@@ -2,6 +2,7 @@ package com.microservice.userservice.service;
 
 import com.microservice.userservice.Entity.User;
 import com.microservice.userservice.dto.UserRequest;
+import com.microservice.userservice.exception.UserNotFoundException;
 import com.microservice.userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,6 @@ public class UserService {
 
     public User getUser(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(id));
     }
 }
