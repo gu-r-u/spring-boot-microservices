@@ -9,12 +9,16 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: true   # auto routes via Eureka
+          enabled: true
       routes:
-        - id: user-service
+        - id: user-service-users
           uri: lb://user-service
           predicates:
             - Path=/users/**
+        - id: user-service-auth
+          uri: lb://user-service
+          predicates:
+              - Path=/auth/**
         - id: order-service
           uri: lb://order-service
           predicates:
@@ -28,3 +32,25 @@ eureka:
 logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{X-Correlation-Id}] %-5level %logger{36} - %msg%n"
+
+jwt:
+  secret: my-super-secure-jwt-secret-key-with-at-least-32-bytes
+
+security:
+  public-paths:
+    - /auth/login
+    - /auth/register
+
+  role-rules:
+    /admin:
+      - ADMIN
+    /users:
+      - USER
+      - ADMIN
+
+  role-hierarchy:
+    ADMIN:
+      - ADMIN
+      - USER
+    USER:
+      - USER

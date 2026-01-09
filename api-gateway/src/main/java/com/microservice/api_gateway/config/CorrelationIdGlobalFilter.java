@@ -42,6 +42,6 @@ public class CorrelationIdGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return -1; // run early
+        return -2; // run early
     }
 }
