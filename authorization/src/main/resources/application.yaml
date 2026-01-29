@@ -1,0 +1,22 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: authorization-service
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/auth_db?createDatabaseIfNotExist=true
+    username: root
+    password: admin
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+jwt:
+  secret: my-super-secure-jwt-secret-key-with-at-least-32-bytes
+  access-exp-minutes: 15
+  refresh-exp-days: 7
+
